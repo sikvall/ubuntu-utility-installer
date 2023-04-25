@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+######################################################################
+# Ubuntu standard utilities installer
+# Version 1.16, updated 2021-01-08 by anders@sikvall.se
+######################################################################
+# PLACED IN THE PUBLIC DOMAIN BY THE AUTHOR USE AND ADAPT
+# FREELY TO YOUR NEEDS.
+######################################################################
+
+# First update the system
+sudo apt -y update
+sudo apt -y upgrade
+
+# General tools that is good to have for all systems
+sudo apt -y install build-essential emacs git htop atop tmux byobu \
+     zsh borgbackup wget curl nmap net-tools traceroute mtr mosh \
+     irssi mc mg vim rsync rclone
+
+# Oh my zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Set the good theme
+sed -i 's/robbyrussell/afowler/' ~/.zshrc
+
+while getopts hdm arg; do
+    case "${arg}" in
+    h)
+	echo "Usage: install [options]"
+	echo
+	echo "-d      Install standard desktop tools needed."
+	echo "-t      Text, documentation and LaTeX tools"
+	;;
+    d)
+	# Only if we have a desktop, othrwise skip
+	sudo apt -y install dconf-editor gnome-tweaks gparted flameshot
+	gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false 
+	gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
+	;;
+    t)
+	# Multimedia stuff (with desktop)
+	sudo apt -y install gimp vlc inkscape texlive-all texstudio calibre sigil
+	;;
+    *)
+	echo "Unknown uptions, use -h for more information."
+	;;
+    esac
+done
