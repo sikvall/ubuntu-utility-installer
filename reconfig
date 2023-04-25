@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# This script reconfigures a linux host that has been cloned from another
+# so that it gets its own ip, has a unique hostname and re-generates the
+# ssh keys.
+#
+# It takes one argument:
+#    --hostname HOSTNAME
+#        Indicatind the new HOSTNAME which must be a valid hostname or it may
+#        fail to properly set this in the system.
+#
+# After running this script the system should be rebooted for the changes to take
+# full effect and the system should be given a new IP address.
+#
+# Works with Ubuntu and probably other Debian derivates as well.
+#
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+	-h|--help)
+	    shift
+	    echo "Reconfigure cloned machine. Will change hostname, machine-id and ssh keys."
+	    echo
+	    echo "ARGUMENTS"
+	    echo "    --hostname -n HOSTNAME"
+	    echo
+	    ;;
+	-n|--hostname)
+	    HOSTNAME=$2
+	    shift
+	    shift
+	    ;;
+	*)
+	    echo "$0 -h or --help for more info."
+	    exit 1
+	    ;;
+    esac
+done
+
+if [ "$HOSTNAME" = "" ]; then
+    echo "No hostname given. See -h for more info."
+    exit 1
+fi
+
+# So now we know the hostname, set up the system properly
+hostnamectl set-hostname "$HOSTNAME"
+sudo rm /etc/machine-id
+sudo systemd-machine-id-setup
+sudo rm /etc/sshd/ssh_host_*
+sudo dpkg-reconfigure open-ssh
+
+	
