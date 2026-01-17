@@ -32,7 +32,7 @@ while getopts hdm arg; do
 	;;
     d)
 	# Only if we have a desktop, othrwise skip
-	sudo apt -y install dconf-editor gnome-tweaks gparted flameshot
+	sudo apt -y install dconf-editor gnome-tweaks gparted flameshot kleopatra
 	gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false 
 	gsettings set org.gnome.shell.extensions.dash-to-dock dock-position BOTTOM
 	;;
